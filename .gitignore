@@ -36,6 +36,7 @@ reports/figures/dataset_distribution.png
 *.tar.gz
 
 # Generated training artifacts
+artifacts/
 outputs/checkpoints/
 outputs/logs_tensorboard/
 outputs/heatmaps/

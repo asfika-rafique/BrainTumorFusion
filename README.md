@@ -12,6 +12,10 @@ BrainTumorFusion is research software for four-class brain MRI image classificat
 
 The repository separates reusable package code, experiment configurations, command-line tools, tests, documentation, and historical research artifacts. Its release-candidate workflow keeps exact duplicate image files together across train, validation, and final-test splits.
 
+## Research motivation
+
+The project investigates whether a compact, transfer-learning-based image classifier can organize four brain-MRI image categories while retaining a reproducible evaluation path and model-inspection tooling. The accompanying paper is a documentation reference only; the implementation, local data audit, and preserved artifacts remain the sources of truth.
+
 ## Key features
 
 | Area | Current capability |
@@ -26,6 +30,8 @@ The repository separates reusable package code, experiment configurations, comma
 ## Current implementation
 
 The active pipeline is image-only. The text encoder and text-fusion path are retained under `_archive/` as unfinished historical work. `data/captions.csv` contains class-derived templates rather than clinical reports or independent patient text, and is not used by the active configurations.
+
+The implemented model is a ResNet feature encoder followed by the repository's projection/fusion block and a four-class linear head. The term “fusion” currently refers to learned feature integration within the image branch; multimodal text fusion is not implemented.
 
 ## Methodology
 
@@ -93,7 +99,9 @@ The clean trainer writes validation-selected checkpoints and performs final-test
 | `data/` | Dataset instructions; local data is excluded |
 | `data/raw/` | Authorized local medical images; ignored |
 | `data/interim/` | Generated split manifest; ignored |
+| `docs/` | Implementation-grounded research documentation |
 | `docs/figures/` | Selected existing figures included for README presentation |
+| `experiments/` | Experiment protocol and traceability notes |
 | `notebooks/` | Notebook navigation and retained history |
 | `outputs/` | Local generated artifacts; ignored by category |
 | `reports/` | Curated reports and validation documentation |
@@ -126,6 +134,8 @@ data/raw/
 ```
 
 The supplied local dataset contains 3,264 readable JPEG images. Raw medical images are excluded from GitHub. Dataset source, licensing, consent, de-identification, and version information remain pending confirmation; see [data/README.md](data/README.md).
+
+The reproducible local audit and exact split counts are documented in [docs/DATASET.md](docs/DATASET.md). Its generated files are written under the ignored `artifacts/` directory and are not release data.
 
 ## Privacy and data handling
 
@@ -170,7 +180,13 @@ python -m scripts.training.train --cfg configs/resnet18_image_only.yaml
 
 ## Evaluation and inference
 
-The clean trainer produces the final-test metrics artifact after validation-based checkpoint selection. Historical checkpoint evaluation and inference commands remain available for reproducing preserved artifacts:
+The clean trainer produces the final-test metrics artifact after validation-based checkpoint selection. A selected clean checkpoint can also be evaluated explicitly once on the final test loader:
+
+```powershell
+python -m scripts.evaluation.evaluate_clean --cfg configs/clean_resnet18_image_only.yaml --ckpt outputs/checkpoints/clean_resnet18/best_validation_ep<epoch>_acc<val>.pt --out artifacts/results/clean_test_metrics.json
+```
+
+Replace the checkpoint filename with the actual validation-selected file created by training. Historical checkpoint evaluation and inference commands remain available for reproducing preserved artifacts:
 
 ```powershell
 python -m scripts.evaluation.evaluate --cfg configs/resnet50_image_only.yaml --ckpt outputs/checkpoints/best_ep18_acc0.830.pt
@@ -189,6 +205,15 @@ For each experiment, retain the dataset version or checksum, configuration, seed
 
 The detailed validation record is available at [reports/validation/research_validation_audit.md](reports/validation/research_validation_audit.md). It documents the absence of patient-level identifiers and the limitations of historical artifacts.
 
+Implementation details are recorded in [docs/PREPROCESSING.md](docs/PREPROCESSING.md), [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), and [docs/TRAINING_METHOD.md](docs/TRAINING_METHOD.md). Run the local evidence-producing audits with:
+
+```powershell
+python -m scripts.audit_dataset --data-root data/raw --output-dir artifacts
+python -m scripts.audit_data_leakage --data-root data/raw --manifest data/interim/leakage_free_split.csv --output-dir artifacts
+python -m scripts.generate_figures --data-root data/raw --output-dir artifacts/figures
+python -m scripts.inspect_architecture --config configs/clean_resnet18_image_only.yaml --output-dir artifacts
+```
+
 ## Results status
 
 No clean-pipeline performance result has been established in the repository. Runtime training and evaluation remain pending in a supported ML environment.
@@ -204,6 +229,8 @@ Preserved historical artifacts are internally inconsistent: the historical JSON/
 - Captions are class-derived templates, not independent clinical text.
 - Existing checkpoint-to-result lineage is incomplete.
 - No clinical or external validation has been performed.
+
+The expanded limitation record is available at [docs/LIMITATIONS.md](docs/LIMITATIONS.md). Future directions are intentionally separated in [docs/FUTURE_WORK.md](docs/FUTURE_WORK.md).
 
 ## Citation
 

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pytest
 from PIL import Image
 
 from brain_tumor_fusion.data.splitting import assign_duplicate_groups, file_sha256
@@ -12,6 +13,8 @@ def test_metrics_match_confusion_counts() -> None:
     assert result["accuracy"] == 3 / 5
     assert result["confusion_matrix"] == [[1, 1, 0], [0, 2, 0], [1, 0, 0]]
     assert result["per_class"]["c"]["recall"] == 0.0
+    assert result["macro_f1"] == pytest.approx((0.5 + (2 * (2 / 3) * 1 / ((2 / 3) + 1)) + 0.0) / 3)
+    assert result["normalized_confusion_matrix"][0] == [0.5, 0.5, 0.0]
 
 
 def test_duplicate_group_assignment_keeps_hash_group_together(tmp_path: Path) -> None:

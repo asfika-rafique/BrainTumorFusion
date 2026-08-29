@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+from collections import Counter
 
 import torch
 import torch.nn as nn
@@ -40,6 +41,27 @@ def _criterion(cfg: dict[str, Any], device: torch.device) -> nn.Module:
     weights = cfg.get("train", {}).get("class_weights")
     tensor = torch.tensor(weights, dtype=torch.float32, device=device) if weights else None
     return nn.CrossEntropyLoss(weight=tensor)
+
+
+def _clean_training_config(
+    cfg: dict[str, Any], train_loader: DataLoader, class_names: list[str]
+) -> tuple[dict[str, Any], dict[str, int], list[float] | None]:
+    """Derive optional class weights from the clean training dataset only."""
+
+    train_cfg = dict(cfg.get("train", {}))
+    dataset = train_loader.dataset
+    class_to_idx = getattr(dataset, "class_to_idx", {})
+    counts = Counter(class_to_idx[path.parent.name] for path in getattr(dataset, "image_paths", []))
+    class_counts = {name: int(counts.get(index, 0)) for index, name in enumerate(class_names)}
+    if not bool(train_cfg.get("derive_class_weights", False)):
+        return cfg, class_counts, train_cfg.get("class_weights")
+    if any(count <= 0 for count in class_counts.values()):
+        raise ValueError(f"Cannot derive class weights from empty clean training classes: {class_counts}")
+    total = sum(class_counts.values())
+    weights = [total / (len(class_names) * class_counts[name]) for name in class_names]
+    effective = dict(cfg)
+    effective["train"] = dict(train_cfg, class_weights=weights)
+    return effective, class_counts, weights
 
 
 @torch.no_grad()
@@ -186,6 +208,7 @@ def try_clean_train(cfg_path: str, epochs: int | None = None) -> None:
         )
         print(f"[split] generated deterministic manifest at {manifest_path}")
     train_loader, validation_loader, test_loader, class_names = make_clean_loaders_from_cfg(cfg, config_root(path))
+    cfg, train_class_counts, effective_class_weights = _clean_training_config(cfg, train_loader, class_names)
     model = build_model(cfg, num_classes=len(class_names)).to(device)
     optimizer = torch.optim.AdamW(
         model.parameters(),
@@ -224,8 +247,15 @@ def try_clean_train(cfg_path: str, epochs: int | None = None) -> None:
                     "model": model.state_dict(),
                     "epoch": epoch,
                     "validation_accuracy": float(validation_accuracy),
+                    "validation_loss": float(validation_loss),
                     "classes": class_names,
                     "config": portable_path(path),
+                    "seed": int(cfg.get("seed", 42)),
+                    "train_class_counts": train_class_counts,
+                    "class_weights": effective_class_weights,
+                    "optimizer": optimizer.state_dict(),
+                    "scheduler": None,
+                    "amp_scaler": scaler.state_dict() if scaler is not None else None,
                 },
                 best_checkpoint,
             )
@@ -247,6 +277,12 @@ def try_clean_train(cfg_path: str, epochs: int | None = None) -> None:
             "test_metrics": test_metrics,
             "classes": class_names,
             "config": portable_path(path),
+            "seed": int(cfg.get("seed", 42)),
+            "train_class_counts": train_class_counts,
+            "class_weights": effective_class_weights,
+            "optimizer": optimizer.state_dict(),
+            "scheduler": None,
+            "amp_scaler": scaler.state_dict() if scaler is not None else None,
         },
         final_checkpoint,
     )
@@ -260,6 +296,9 @@ def try_clean_train(cfg_path: str, epochs: int | None = None) -> None:
                 "manifest": portable_path(Path(cfg["paths"]["split_manifest"])),
                 "selected_checkpoint": portable_path(best_checkpoint),
                 "final_checkpoint": portable_path(final_checkpoint),
+                "seed": int(cfg.get("seed", 42)),
+                "train_class_counts": train_class_counts,
+                "class_weights": effective_class_weights,
                 "test_loss": float(test_loss),
                 "test_accuracy": float(test_accuracy),
                 "metrics": test_metrics,

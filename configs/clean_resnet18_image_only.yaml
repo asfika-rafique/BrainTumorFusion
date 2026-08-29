@@ -28,6 +28,7 @@ train:
   epochs: 12
   lr: 3e-4
   weight_decay: 1e-4
-  class_weights: [1.2, 1.5, 0.8, 1.0]
+  class_weights: null
+  derive_class_weights: true
   num_workers: 0
   mixed_precision: true

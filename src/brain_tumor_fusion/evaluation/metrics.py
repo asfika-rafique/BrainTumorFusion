@@ -31,4 +31,29 @@ def classification_metrics(
         f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
         report[name] = {"precision": precision, "recall": recall, "f1-score": f1, "support": sum(matrix[index])}
 
-    return {"accuracy": correct / total if total else 0.0, "confusion_matrix": matrix, "per_class": report, "total": total}
+    accuracy = correct / total if total else 0.0
+    macro = {
+        key: sum(values[key] for values in report.values()) / n_classes if n_classes else 0.0
+        for key in ("precision", "recall", "f1-score")
+    }
+    weighted = {
+        key: sum(values[key] * values["support"] for values in report.values()) / total if total else 0.0
+        for key in ("precision", "recall", "f1-score")
+    }
+    normalized = [
+        [value / sum(row) if sum(row) else 0.0 for value in row]
+        for row in matrix
+    ]
+    return {
+        "accuracy": accuracy,
+        "confusion_matrix": matrix,
+        "normalized_confusion_matrix": normalized,
+        "per_class": report,
+        "macro avg": dict(macro, support=total),
+        "weighted avg": dict(weighted, support=total),
+        "macro_precision": macro["precision"],
+        "macro_recall": macro["recall"],
+        "macro_f1": macro["f1-score"],
+        "weighted_f1": weighted["f1-score"],
+        "total": total,
+    }
