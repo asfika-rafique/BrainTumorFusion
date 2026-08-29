@@ -1,0 +1,31 @@
+device: cuda
+model:
+  dropout: 0.3
+  fusion_hidden: 512
+  image_encoder: resnet18
+  img_out_dim: 512
+  num_classes: 4
+  text_encoder: bert-base-uncased
+  txt_out_dim: 256
+paths:
+  captions_csv: data/captions.csv
+  ckpt_dir: outputs/checkpoints
+  data_dir: data
+  figures_dir: outputs/figures
+  heatmap_dir: outputs/heatmaps
+  results_dir: outputs/results
+  tb_dir: outputs/logs_tensorboard
+  test_dir: data/Testing
+  train_dir: data/Training
+seed: 42
+train:
+  batch_size: 8
+  epochs: 30
+  img_size: 224
+  lr: 3e-4
+  mixed_precision: true
+  num_workers: 2
+  train_text_encoder: false
+  weight_decay: 1e-4
+use_images: false
+use_text: true

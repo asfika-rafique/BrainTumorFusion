@@ -1,0 +1,56 @@
+# Python and local tooling
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+.env
+.env.*
+*.env
+*.key
+*.pem
+*.p12
+credentials*.json
+secrets*.json
+*secret*
+*credential*
+.idea/
+
+# Local datasets and sensitive medical data
+data/raw/
+data/interim/
+data/processed/
+data/release_safe/
+*.dcm
+*.nii
+*.nii.gz
+*.zip
+*.tar
+*.tar.gz
+
+# Generated training artifacts
+outputs/checkpoints/
+outputs/logs_tensorboard/
+outputs/heatmaps/
+outputs/results/
+outputs/figures/
+_archive/ide_metadata/
+_archive/legacy_visualizations/outputs_figures/
+_archive/verification/
+*.pt
+*.pth
+*.ckpt
+*.log
+*.tmp
+*.temp
+*.bak
+
+# Local OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo

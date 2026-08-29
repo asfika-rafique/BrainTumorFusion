@@ -1,0 +1,34 @@
+# Short image-only evaluation config derived from the ResNet-50 experiment.
+seed: 42
+device: cuda
+use_images: true
+use_text: false
+
+paths:
+  data_dir: data
+  train_dir: data/raw/train
+  test_dir: data/raw/test
+  captions_csv: data/captions.csv
+  ckpt_dir: outputs/checkpoints
+  tb_dir: outputs/logs_tensorboard
+  results_dir: outputs/results
+  heatmap_dir: outputs/heatmaps
+  figures_dir: outputs/figures
+
+model:
+  image_encoder: resnet50
+  pretrained: false
+  img_out_dim: 2048
+  fusion_hidden: 512
+  num_classes: 4
+  dropout: 0.3
+
+train:
+  img_size: 224
+  batch_size: 8
+  epochs: 1
+  lr: 1e-4
+  weight_decay: 1e-4
+  class_weights: [1.2, 1.5, 0.8, 1.0]
+  num_workers: 0
+  mixed_precision: false

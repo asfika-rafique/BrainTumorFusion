@@ -1,0 +1,37 @@
+# src/configs/fine_tune.yaml
+seed: 42
+device: cuda
+
+use_images: true
+use_text:  true
+
+paths:
+  data_dir: "data"
+  train_dir: "data/Training"
+  test_dir:  "data/Testing"
+  captions_csv: "data/captions.csv"
+  ckpt_dir: "outputs/checkpoints"
+  tb_dir:   "outputs/logs_tensorboard"
+  results_dir: "outputs/results"
+
+model:
+  image_encoder: "resnet18"
+  img_out_dim: 256
+  text_encoder: "bert-base-uncased"
+  txt_out_dim: 256
+  fusion_hidden: 512
+  num_classes: 4
+  dropout: 0.3
+
+train:
+  img_size: 224
+  batch_size: 8
+  epochs: 8
+  lr: 1e-4
+  weight_decay: 1e-4
+  num_workers: 2
+  mixed_precision: true
+  train_text_encoder: true
+
+  # ⬇️ important: fine-tune start from best checkpoint
+  pretrained_ckpt: "outputs/checkpoints/best_ep22_acc0.810.pt"

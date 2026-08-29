@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use BrainTumorFusion, please cite this software."
+title: "BrainTumorFusion"
+abstract: "Research code for brain tumor image classification with a reproducible image-only deep learning pipeline."
+type: software
+version: "0.1.0"
+date-released: 2026-08-29
+authors:
+  - name: "Tanha Asfika Jaman"
+license: MIT
+repository-code: "https://github.com/TO_BE_PROVIDED/BrainTumorFusion"
+keywords:
+  - brain tumor
+  - MRI
+  - image classification
+  - deep learning
+  - Grad-CAM

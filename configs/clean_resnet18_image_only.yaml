@@ -1,0 +1,33 @@
+# Leakage-aware image-only pipeline. Generate the manifest before training.
+seed: 42
+device: cuda
+use_text: false
+
+split:
+  validation_fraction: 0.15
+  test_fraction: 0.15
+
+paths:
+  raw_data_dir: data/raw
+  split_manifest: data/interim/leakage_free_split.csv
+  captions_csv: data/captions.csv
+  clean_ckpt_dir: outputs/checkpoints/clean_resnet18
+  clean_results_dir: outputs/results/clean_resnet18
+
+model:
+  image_encoder: resnet18
+  pretrained: true
+  img_out_dim: 512
+  fusion_hidden: 512
+  num_classes: 4
+  dropout: 0.2
+
+train:
+  img_size: 224
+  batch_size: 16
+  epochs: 12
+  lr: 3e-4
+  weight_decay: 1e-4
+  class_weights: [1.2, 1.5, 0.8, 1.0]
+  num_workers: 0
+  mixed_precision: true
