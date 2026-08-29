@@ -47,6 +47,22 @@ One final test evaluation
 Metrics, predictions, and optional Grad-CAM visualization
 ```
 
+## Visual results
+
+The following selected artifacts are preserved from the existing project outputs for orientation and research traceability. They are **historical / unverified** and do not represent clean-pipeline performance.
+
+### Grad-CAM examples
+
+![Historical Grad-CAM examples](docs/figures/gradcam_examples.png)
+
+*Historical / unverified artifact — existing Grad-CAM overlays shown for research traceability, not as evidence of current model performance or clinical validity.*
+
+### Historical confusion matrix
+
+![Historical confusion matrix](docs/figures/historical_confusion_matrix.png)
+
+*Historical / unverified artifact — preserved confusion-matrix visualization from an earlier experiment; it must not be interpreted as current verified performance.*
+
 ## Quick start
 
 The raw dataset is not distributed with this repository. After obtaining an authorized local copy, use:
@@ -71,24 +87,25 @@ The clean trainer writes validation-selected checkpoints and performs final-test
 
 ## Repository structure
 
-```text
-configs/                         Experiment configurations
-data/                            Dataset instructions; local data is excluded
-data/raw/                        Authorized local medical images; ignored
-data/interim/                    Generated split manifest; ignored
-notebooks/                       Notebook navigation and retained history
-outputs/                         Local generated artifacts; ignored by category
-reports/                         Curated reports and validation documentation
-scripts/data/                    Dataset, split, audit, and sanitization tools
-scripts/training/                Historical and clean training entry points
-scripts/evaluation/              Evaluation and reporting tools
-scripts/inference/               Inference utilities
-scripts/visualization/           Plotting and Grad-CAM tools
-src/brain_tumor_fusion/          Reusable Python package
-tests/                           Automated tests
-ui/                              Research demonstration interfaces
-_archive/                        Historical code, results, and visualizations
-```
+| Directory | Purpose |
+|---|---|
+| `configs/` | Experiment configurations |
+| `data/` | Dataset instructions; local data is excluded |
+| `data/raw/` | Authorized local medical images; ignored |
+| `data/interim/` | Generated split manifest; ignored |
+| `docs/figures/` | Selected existing figures included for README presentation |
+| `notebooks/` | Notebook navigation and retained history |
+| `outputs/` | Local generated artifacts; ignored by category |
+| `reports/` | Curated reports and validation documentation |
+| `scripts/data/` | Dataset, split, audit, and sanitization tools |
+| `scripts/training/` | Historical and clean training entry points |
+| `scripts/evaluation/` | Evaluation and reporting tools |
+| `scripts/inference/` | Inference utilities |
+| `scripts/visualization/` | Plotting and Grad-CAM tools |
+| `src/brain_tumor_fusion/` | Reusable Python package |
+| `tests/` | Automated tests |
+| `ui/` | Research demonstration interfaces |
+| `_archive/` | Historical code, results, and visualizations |
 
 ## Dataset
 
@@ -176,7 +193,7 @@ The detailed validation record is available at [reports/validation/research_vali
 
 No clean-pipeline performance result has been established in the repository. Runtime training and evaluation remain pending in a supported ML environment.
 
-Preserved historical artifacts include a 394-image report that recomputes to 0.2766497462 accuracy, while some checkpoint filenames contain higher accuracy-like values. These artifacts are retained as **historical and unverified** and are not presented as current model performance.
+Preserved historical artifacts are internally inconsistent: the historical JSON/confusion-matrix report records `0.2766497462` accuracy, while the preserved 394-row prediction CSV recomputes to `115/394 = 0.2918781726`. Some checkpoint filenames also contain higher accuracy-like values. These artifacts are retained as **historical and unverified** and are not presented as current model performance.
 
 ## Limitations
 

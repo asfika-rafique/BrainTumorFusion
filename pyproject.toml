@@ -8,8 +8,6 @@ version = "0.1.0"
 description = "Research code for image-only brain-tumor classification and Grad-CAM visualization."
 requires-python = ">=3.11,<3.13"
 readme = "README.md"
-[project.urls]
-Repository = "https://github.com/asfika-rafique/BrainTumorFusion"
 dependencies = [
   "torch==2.5.1",
   "torchvision==0.20.1",
@@ -23,6 +21,9 @@ dependencies = [
   "opencv-python==4.12.0.88",
   "PyYAML==6.0.3",
 ]
+
+[project.urls]
+Repository = "https://github.com/asfika-rafique/BrainTumorFusion"
 
 [project.optional-dependencies]
 ui = ["streamlit==1.50.0"]
