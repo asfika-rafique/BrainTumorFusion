@@ -6,9 +6,10 @@ type: software
 version: "0.1.0"
 date-released: 2026-08-29
 authors:
-  - name: "Tanha Asfika Jaman"
+  - family-names: "Jaman"
+    given-names: "Tanha Asfika"
 license: MIT
-repository-code: "https://github.com/TO_BE_PROVIDED/BrainTumorFusion"
+repository-code: "https://github.com/asfika-rafique/BrainTumorFusion"
 keywords:
   - brain tumor
   - MRI

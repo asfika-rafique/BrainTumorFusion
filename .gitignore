@@ -25,6 +25,9 @@ data/raw/
 data/interim/
 data/processed/
 data/release_safe/
+data/captions.csv
+_archive/data/captions_before_restructure.csv
+reports/figures/dataset_distribution.png
 *.dcm
 *.nii
 *.nii.gz
